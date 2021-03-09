@@ -38,8 +38,6 @@ int main(int argc, char* argv[])
     GLuint vbo = 0; // vertex buffer object - I think it's an address
     glGenBuffers(1, &vbo); // generate a buffer and put the address in vbo uint | this buffer is inside graphics card
 
-    cout << vbo << endl; // print the address to see where it is rn
-
     glBindBuffer(GL_ARRAY_BUFFER, vbo); // set the buffer as the main buffer in gl state (GL_ARRAY_BUFFER)
     glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), points, GL_STATIC_DRAW); // specify the targer, buffer size, data, usage | creates and initializes a buffer object's data store
 
@@ -61,28 +59,26 @@ int main(int argc, char* argv[])
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL); // define the layout of the vertex buffer on index 0
     // index, size, type, normalized, stride (byte offset between vertex attributes (if 0 it's tightly packed)), pointer
 
-    // vertex shader as string 
-    const char* vertex_shader =
-    "#version 400\n"
-    "in vec3 vp;"
-    "void main() {"
-    "  gl_Position = vec4(vp, 1.0);" // gl_Position is a reserved output
-    "}";
+    // import shaders from files as strings
+    cout << "loading vertex shader string" << endl;
+    std::ifstream ifs("./Shaders/vertex.glsl");
+    std::string content_vtx((std::istreambuf_iterator<char>(ifs)),(std::istreambuf_iterator<char>()));
+    const char* vertex_char_arr = &content_vtx[0];
+    ifs.close();
 
-    // fragment shader as string
-    const char* fragment_shader =
-    "#version 400\n"
-    "out vec4 frag_colour;" 
-    "void main() {"
-    "  frag_colour = vec4(0.5, 0.0, 0.5, 1.0);"
-    "}";
+    cout << "loading frag shader string" << endl;
+    ifs.open("./Shaders/fragment.glsl");
+    std::string content_frag((std::istreambuf_iterator<char>(ifs)),(std::istreambuf_iterator<char>()));
+    const char* frag_char_arr = &content_frag[0];
+    ifs.close();
 
     // load and compile the shaders
     GLuint vs = glCreateShader(GL_VERTEX_SHADER); // create vertex shader and save address
-    glShaderSource(vs, 1, &vertex_shader, NULL); // load the string into the GL shader
+    glShaderSource(vs, 1, &vertex_char_arr, NULL); // load the string into the GL shader
     glCompileShader(vs); // compile the shader
+
     GLuint fs = glCreateShader(GL_FRAGMENT_SHADER); // create another GL shader
-    glShaderSource(fs, 1, &fragment_shader, NULL); // load the frag shader
+    glShaderSource(fs, 1, &frag_char_arr, NULL); // load the frag shader
     glCompileShader(fs); // compile the shader
 
     // combine the shaders as a GPU shader programme

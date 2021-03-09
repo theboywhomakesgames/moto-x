@@ -2,7 +2,9 @@
 #define _COMMON_H
 
 /*=======STANDARD TEMPLATE LIBRARY=======*/
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <cstdlib>
 #include <memory>
