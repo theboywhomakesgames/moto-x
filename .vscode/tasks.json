@@ -57,7 +57,9 @@
                     "-g",
                     "-std=c++11",
                     "main.cpp",
+                    "${workspaceRoot}/Engine/**.cpp",
 
+                    "-I${workspaceRoot}/Engine",
                     "-I${workspaceRoot}/Dependencies/include/GLFW/include",
 
                     "-o", "Builds/motor",
