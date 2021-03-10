@@ -1,3 +1,6 @@
+#ifndef MY_LOGGER
+#define MY_LOGGER
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -18,3 +21,5 @@ class logger
         bool restart_gl_log();
         bool gl_log(const char* message, ...);
 };
+
+#endif
