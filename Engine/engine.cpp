@@ -40,11 +40,61 @@ void engine::compileShaders(const char* vertex_char_arr, const char* frag_char_a
     glShaderSource(fs, 1, &frag_char_arr, NULL);
     glCompileShader(fs);
 
+    int success_vtx, success_frg;
+    char infoLog_vtx[512], infoLog_frg[512];
+
+    glGetShaderiv(vs, GL_COMPILE_STATUS, &success_vtx);
+    glGetShaderiv(fs, GL_COMPILE_STATUS, &success_frg);
+    
+    if(!success_vtx){
+        glGetShaderInfoLog(vs, 512, NULL, infoLog_vtx);
+        _logger.gl_log("error compiling vertex shader:");
+        _logger.gl_log(infoLog_vtx);
+    }
+
+    if(!success_frg){
+        glGetShaderInfoLog(fs, 512, NULL, infoLog_frg);
+        _logger.gl_log("error compiling fragment shader:");
+        _logger.gl_log(infoLog_frg);
+    }
+
     _logger.gl_log("creating program");
-    this->shader_programme = glCreateProgram();
-    glAttachShader(shader_programme, fs);
-    glAttachShader(shader_programme, vs);
-    glLinkProgram(shader_programme);
+    this->shader_program = glCreateProgram();
+    glAttachShader(shader_program, fs);
+    glAttachShader(shader_program, vs);
+    glLinkProgram(shader_program);
+
+    int success_program;
+    char infolog_program[512];
+
+    glGetProgramiv(shader_program, GL_LINK_STATUS, &success_program);
+    
+    if(!success_program){
+        glGetProgramPipelineInfoLog(shader_program, 512, NULL, infolog_program);
+        _logger.gl_log("error linking shaders");
+        _logger.gl_log(infolog_program);
+    }
+}
+
+void engine::_update_fps_counter(){
+    static double previous_seconds = glfwGetTime();
+    static int frame_count = 0;
+
+    double current_seconds = glfwGetTime();
+    double elapsed_seconds = current_seconds - previous_seconds;
+
+    if (elapsed_seconds > 1) {
+        previous_seconds = current_seconds;
+        double fps = (double)frame_count / elapsed_seconds;
+
+        char fps_txt[128];
+        sprintf(fps_txt, "%.2f", fps);
+        glfwSetWindowTitle(window, fps_txt);
+
+        frame_count = 0;
+    }
+
+    frame_count++;
 }
 
 // public
@@ -59,7 +109,15 @@ bool engine::initialize(logger _logger){
     } 
 
     _logger.gl_log("creating context window");
-    this->window = glfwCreateWindow(640, 480, "Hello Triangle", NULL, NULL);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
+
+    GLFWmonitor* primary_monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* video_mode = glfwGetVideoMode(primary_monitor);
+    this->window = glfwCreateWindow(300, 200, "Full Screen App", NULL, NULL);
 
     if (!window) {
         fprintf(stderr, "ERROR: could not open window with GLFW3\n");
@@ -100,12 +158,18 @@ bool engine::initialize(logger _logger){
 void engine::run(){
     _logger.gl_log("rendering loop");
     while(!glfwWindowShouldClose(window)) {
+        _update_fps_counter();
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(shader_programme);
+        glUseProgram(shader_program);
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+
         glfwPollEvents();
         glfwSwapBuffers(window);
+        if(GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE)){
+            glfwSetWindowShouldClose(window, 1);
+        }
     }
     
     _logger.gl_log("terminating");
