@@ -1,3 +1,4 @@
-# I do experiments !
-this is my open gl experiments repos
-each commit is a new experiment with comments that explain things
+# A pixelated game engine
+So yeah... I'm making engines now : /
+
+I'm not sure if I hit my head somewhere tho...
