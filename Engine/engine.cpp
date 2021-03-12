@@ -64,6 +64,9 @@ void engine::compileShaders(const char* vertex_char_arr, const char* frag_char_a
     glAttachShader(shader_program, vs);
     glLinkProgram(shader_program);
 
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+
     int success_program;
     char infolog_program[512];
 
@@ -133,22 +136,46 @@ bool engine::initialize(logger _logger){
     glDepthFunc(GL_LESS);
 
     float points[] = {
-        0.0f,  0.5f,  0.0f,
-        0.0f, 0.0f,  0.0f,
-        -0.5f, -0.5f,  0.0f
+        0.5f,  0.5f,  0.0f,
+        0.5f, -0.5f,  0.0f,
+        -0.5f, -0.5f,  0.0f,
+        -0.5f, 0.5f, 0.0f
     };
 
     GLuint vbo = 0;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), points, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
 
     this->vao = 0;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+    // ===============================================================================
+    // ===============================================================================
+    // The last element buffer object that gets bound while
+    // a VAO is bound, is stored as the VAO's element buffer object.
+    // Binding to a VAO then also automatically binds that EBO.
+    // ===============================================================================
+    // ===============================================================================
+    // A VAO stores the glBindBuffer calls when the target is GL_ELEMENT_ARRAY_BUFFER.
+    // This also means it stores its unbind calls so make sure you
+    // don't unbind the element array buffer before unbinding your VAO,
+    // otherwise it doesn't have an EBO configured.
+    // ===============================================================================
+    // ===============================================================================
+
+    unsigned int indices[] = {
+        0, 1, 2,
+        0, 2, 3
+    };
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     getShaders();
 
@@ -163,7 +190,18 @@ void engine::run(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glUseProgram(shader_program);
         glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        // To draw your triangles in wireframe mode,
+        // you can configure how OpenGL draws its primitives
+        // via glPolygonMode(GL_FRONT_AND_BACK, GL_LINE).
+        // The first argument says we want to apply it to the
+        // front and back of all triangles and the second line
+        // tells us to draw them as lines. Any subsequent drawing
+        // calls will render the triangles in wireframe mode until
+        // we set it back to its default using glPolygonMode(GL_FRONT_AND_BACK, GL_FILL).
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwPollEvents();
         glfwSwapBuffers(window);

@@ -10,7 +10,7 @@ private:
     logger _logger;
     GLFWwindow* window;
     GLuint shader_program;
-    GLuint vao;
+    GLuint vao, ebo;
 
     void getShaders();
     void compileShaders(const char* vertex_char_arr, const char* frag_char_arr);
