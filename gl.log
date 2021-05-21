@@ -1,21 +1,35 @@
-GL_LOG_FILE log. local time Fri Mar 12 10:12:33 2021
-intializing engine || Fri Mar 12 10:12:33 2021
-creating context window || Fri Mar 12 10:12:33 2021
-importing shader files || Fri Mar 12 10:12:34 2021
-vertex shader || Fri Mar 12 10:12:34 2021
-#version 400
-layout (location=0) in vec3 vp;
-void main() {
-  gl_Position = vec4(vp, 1.0);
-} || Fri Mar 12 10:12:34 2021
-fragment shader || Fri Mar 12 10:12:34 2021
+GL_LOG_FILE log. local time Fri May 21 20:44:17 2021
+intializing engine || Fri May 21 20:44:17 2021
+creating context window || Fri May 21 20:44:18 2021
+importing shader files || Fri May 21 20:44:19 2021
+vertex shader: || Fri May 21 20:44:19 2021
+================= || Fri May 21 20:44:19 2021
 #version 400
 
+layout (location=0) in vec3 vp; // vertice position
+layout (location=1) in vec3 vc; // vertice color
+out vec3 output_color;
+
+void main() {
+  gl_Position = vec4(vp, 1.0);
+  output_color = vc;
+} || Fri May 21 20:44:19 2021
+================= || Fri May 21 20:44:19 2021
+ || Fri May 21 20:44:19 2021
+ || Fri May 21 20:44:19 2021
+fragment shader || Fri May 21 20:44:19 2021
+================= || Fri May 21 20:44:19 2021
+#version 400
+
+in vec3 output_color;
 out vec4 frag_colour;
 
 void main(){
-    frag_colour = vec4(0, 1, 1, 1.0);
-} || Fri Mar 12 10:12:34 2021
-creating shaders || Fri Mar 12 10:12:34 2021
-creating program || Fri Mar 12 10:12:34 2021
-rendering loop || Fri Mar 12 10:12:34 2021
+    frag_colour = vec4(output_color.xyz, 1.0);
+} || Fri May 21 20:44:19 2021
+================= || Fri May 21 20:44:19 2021
+ || Fri May 21 20:44:19 2021
+ || Fri May 21 20:44:19 2021
+creating shaders || Fri May 21 20:44:19 2021
+creating program || Fri May 21 20:44:19 2021
+rendering loop || Fri May 21 20:44:19 2021

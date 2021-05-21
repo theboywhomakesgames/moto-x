@@ -1,6 +1,7 @@
 #include "common.h"
 #include "logger.h"
 #include "engine.h"
+#include "Shader/shader.h"
 
 bool isRunning = true;
 
@@ -10,6 +11,7 @@ int main(int argc, char* argv[])
     _logger.restart_gl_log();
     
     engine e = engine();
+
     e.initialize(_logger);
     e.run();
 

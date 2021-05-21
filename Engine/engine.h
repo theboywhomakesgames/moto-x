@@ -1,25 +1,26 @@
-#ifndef MY_ENGINE
-#define MY_ENGINE
+#ifndef MOTOX_ENGINE
+#define MOTOX_ENGINE
 
 #include "common.h"
 #include "logger.h"
+#include "Shader/shader.h"
 
 class engine
 {
-private:
-    logger _logger;
-    GLFWwindow* window;
-    GLuint shader_program;
-    GLuint vao, ebo;
+    private:
+        GLFWwindow* window;
+        GLuint vao, ebo;
+        
+        vector<shader> shaders;
 
-    void getShaders();
-    void compileShaders(const char* vertex_char_arr, const char* frag_char_arr);
-    void _update_fps_counter();
-public:
-    engine(/* args */);
-    ~engine();
-    bool initialize(logger _logger);
-    void run();
+        void getShaders();
+        void _update_fps_counter();
+    public:
+        logger engine_logger;
+        engine(/* args */);
+        ~engine();
+        bool initialize(logger engine_logger);
+        void run();
 };
 
 #endif

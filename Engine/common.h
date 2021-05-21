@@ -10,6 +10,7 @@
 #include <memory>
 #include <ctime>
 #include <vector>
+#include <math.h>
 
 using namespace std;
 
