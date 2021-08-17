@@ -59,9 +59,11 @@
                     "main.cpp",
                     "${workspaceRoot}/Engine/*.cpp",
                     "${workspaceRoot}/Engine/Logger/*.cpp",
+                    "${workspaceRoot}/Engine/Shader/*.cpp",
 
                     "-I${workspaceRoot}/Engine",
                     "-I${workspaceRoot}/Engine/Logger",
+                    "-I${workspaceRoot}/Engine/Shader",
                     "-I${workspaceRoot}/Dependencies/include/GLFW/include",
 
                     "-o", "Builds/motor",

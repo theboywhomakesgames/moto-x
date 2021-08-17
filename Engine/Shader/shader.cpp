@@ -9,7 +9,9 @@ shader::shader(const char* vertex_path, const char* fragment_path, logger engine
 }
 
 void shader::get_shaders(){
-    _logger.gl_log("importing shader files");
+    _logger.gl_log("");
+    _logger.gl_log("importing shader files...");
+    _logger.gl_log("");
     std::ifstream ifs(this->vertex_path);
     std::string content_vtx((std::istreambuf_iterator<char>(ifs)),(std::istreambuf_iterator<char>()));
     this->vertex_char_arr = &content_vtx[0];

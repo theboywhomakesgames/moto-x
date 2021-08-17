@@ -3,6 +3,7 @@
 #include "engine.h"
 #include "logger.h"
 #include "Shader/shader.h"
+#include "Texture/texture.h"
 
 engine::engine(){
 
@@ -80,30 +81,48 @@ bool engine::initialize(logger _logger){
     glDepthFunc(GL_LESS);
 
     float points[] = {
-        // points                   // colors
-        0.5f,   0.5f,   0.0f,       1.0f,   0.0f,   0.0f,
-        0.5f,   -0.5f,  0.0f,       0.0f,   1.0f,   0.0f,
-        -0.5f,  -0.5f,  0.0f,       0.0f,   0.0f,   1.0f,
-        -0.5f,  0.5f,   0.0f,       1.0f,   1.0f,   0.0f
+        // points                   // colors                   // texture coords
+        0.5f,   0.5f,   0.0f,       1.0f,   0.0f,   0.0f,       1.0f, 1.0f,
+        0.5f,   -0.5f,  0.0f,       0.0f,   1.0f,   0.0f,       1.0f, 0.0f,
+        -0.5f,  -0.5f,  0.0f,       0.0f,   0.0f,   1.0f,       0.0f, 0.0f,
+        -0.5f,  0.5f,   0.0f,       1.0f,   1.0f,   0.0f,       0.0f, 1.0f
     };
 
     GLuint vbo = 0;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+    
+    // // creating a texture
+    // int width, height, nrChannels;
+    // unsigned char *data = stbi_load("./Resource/Images/container.jpg", &width, &height, &nrChannels, 0);
+    // unsigned int textureID;
+    // glGenTextures(1, &textureID);
+
+    texture st = texture("./Resource/Images/container.jpg", engine_logger);
+    
+    glActiveTexture(GL_TEXTURE0); // activate texture0 unit
+    glBindTexture(GL_TEXTURE_2D, st.textureID); // bind texture to the last active unit
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, st.width, st.height, 0, GL_RGB, GL_UNSIGNED_BYTE, st.data);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
     this->vao = 0;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     
     // points attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *) 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) 0);
 
     // colors attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+
+    // texture attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
 
     // ===============================================================================
     // ===============================================================================
@@ -120,8 +139,8 @@ bool engine::initialize(logger _logger){
     // ===============================================================================
 
     unsigned int indices[] = {
-        0, 2, 4,
-        0, 4, 6
+        0, 1, 2,
+        0, 2, 3
     };
 
     glGenBuffers(1, &ebo);

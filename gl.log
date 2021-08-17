@@ -1,35 +1,44 @@
-GL_LOG_FILE log. local time Fri May 21 20:44:17 2021
-intializing engine || Fri May 21 20:44:17 2021
-creating context window || Fri May 21 20:44:18 2021
-importing shader files || Fri May 21 20:44:19 2021
-vertex shader: || Fri May 21 20:44:19 2021
-================= || Fri May 21 20:44:19 2021
+GL_LOG_FILE log. local time Tue Aug 17 19:04:51 2021
+intializing engine || Tue Aug 17 19:04:51 2021
+creating context window || Tue Aug 17 19:04:52 2021
+importing shader files || Tue Aug 17 19:04:54 2021
+vertex shader: || Tue Aug 17 19:04:54 2021
+================= || Tue Aug 17 19:04:54 2021
 #version 400
 
 layout (location=0) in vec3 vp; // vertice position
 layout (location=1) in vec3 vc; // vertice color
+layout (location=2) in vec2 st; // vertice st
+
 out vec3 output_color;
+out vec2 tex_coord;
 
 void main() {
   gl_Position = vec4(vp, 1.0);
   output_color = vc;
-} || Fri May 21 20:44:19 2021
-================= || Fri May 21 20:44:19 2021
- || Fri May 21 20:44:19 2021
- || Fri May 21 20:44:19 2021
-fragment shader || Fri May 21 20:44:19 2021
-================= || Fri May 21 20:44:19 2021
+  tex_coord = st;
+} || Tue Aug 17 19:04:54 2021
+================= || Tue Aug 17 19:04:54 2021
+ || Tue Aug 17 19:04:54 2021
+ || Tue Aug 17 19:04:54 2021
+fragment shader || Tue Aug 17 19:04:54 2021
+================= || Tue Aug 17 19:04:54 2021
 #version 400
 
 in vec3 output_color;
+in vec2 tex_coord;
+
+uniform sampler2D texture;
+
 out vec4 frag_colour;
 
 void main(){
-    frag_colour = vec4(output_color.xyz, 1.0);
-} || Fri May 21 20:44:19 2021
-================= || Fri May 21 20:44:19 2021
- || Fri May 21 20:44:19 2021
- || Fri May 21 20:44:19 2021
-creating shaders || Fri May 21 20:44:19 2021
-creating program || Fri May 21 20:44:19 2021
-rendering loop || Fri May 21 20:44:19 2021
+    frag_colour = texture(texture, tex_coord) * vec4(output_color.xyz, 1);
+} || Tue Aug 17 19:04:54 2021
+================= || Tue Aug 17 19:04:54 2021
+ || Tue Aug 17 19:04:54 2021
+ || Tue Aug 17 19:04:54 2021
+creating shaders || Tue Aug 17 19:04:54 2021
+creating program || Tue Aug 17 19:04:54 2021
+rendering loop || Tue Aug 17 19:04:54 2021
+terminating || Tue Aug 17 19:05:20 2021

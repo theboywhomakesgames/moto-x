@@ -25,7 +25,7 @@ using namespace std;
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
-/*=======CLASS DEFINITIONS=======*/
+/*=======GLFW=======*/
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
 
